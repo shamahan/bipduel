@@ -1,0 +1,20 @@
+import { Strings } from './strings';
+
+export const ru: Strings = {
+  languageName: 'Русский',
+  play: 'Играть',
+  language: 'Язык',
+  target: 'Очки до победы',
+  magazine: 'Патроны',
+  unlimited: 'Без лимита',
+  helpP1: 'P1: A/D — поворот, W/S — огонь',
+  helpP2: 'P2: ←/→ — поворот, ↑/↓ — огонь',
+  helpMenu: '↑/↓ — выбор, ←/→ — изменить, ПРОБЕЛ — OK, P — пауза, M — звук',
+  firstTo: (n) => `до ${n}`,
+  reloading: 'ПЕРЕЗАРЯДКА…',
+  paused: 'ПАУЗА',
+  pauseHint: 'ПРОБЕЛ — продолжить, Q — в меню',
+  winner: (p) => `ПОБЕДИЛ P${p}!`,
+  matchOver: 'МАТЧ ОКОНЧЕН',
+  gameOverHint: 'ПРОБЕЛ — реванш, ESC — в меню',
+};

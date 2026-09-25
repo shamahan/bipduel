@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BipDuel — Two-Player Biplane Dogfight in Your Browser</title>
+  <meta name="description" content="Two-player hotseat biplane dogfight in the browser — a tribute to Amiga Dogfight." />
+  <meta name="author" content="Oleksandr Kalinkin" />
+  <!-- превью ссылок; картинку рисует pixel-art/og/build.py. Адреса абсолютные: мессенджеры относительных не понимают -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bipduel.shamahan.com/" />
+  <meta property="og:site_name" content="BipDuel" />
+  <meta property="og:title" content="BipDuel — Two-Player Biplane Dogfight in Your Browser" />
+  <meta property="og:description" content="Two-player hotseat biplane dogfight in the browser — a tribute to Amiga Dogfight." />
+  <meta property="og:image" content="https://bipduel.shamahan.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Red and blue pixel-art biplanes dogfighting over an airfield under the BipDuel title" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <!-- статистика посещений: GoatCounter без cookie; с localhost и из локальной сети скрипт сам не считает -->
+  <script data-goatcounter="https://shamahan.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+  <!-- из спрайта самолёта: pixel-art/favicon/build.py, у каждого размера свой точный битмап -->
+  <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; background: #10141c; display: grid; place-items: center; min-height: 100vh; }
+    /* 1cqw = 8 px канваса 800x600: панель поверх канваса масштабируется вместе с ним */
+    #stage { position: relative; width: min(100vw, 133vh, 1200px); container-type: inline-size; }
+    canvas { display: block; width: 100%; image-rendering: pixelated; }
+    #mute { position: fixed; top: 8px; right: 8px; font: 14px monospace; background: #222a38; color: #cdd6e4; border: 1px solid #445; padding: 4px 10px; cursor: pointer; }
+    /* поделиться: низ меню, под подсказками (иконки 16x16 ×2 = y 532..564 канваса).
+       Иконки ровно по центру, подпись прижата к ним слева — смена подписи ряд не двигает. */
+    #share { position: absolute; left: 0; right: 0; bottom: 4.5cqw; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 1.5cqw; font: 1.5cqw "Press Start 2P", monospace; color: #1c2733; }
+    #share[hidden] { display: none; }
+    #share-label { justify-self: end; white-space: nowrap; }
+    .share-icons { display: flex; gap: 1cqw; }
+    .share-btn { width: 4cqw; height: 4cqw; padding: 0; border: 0; cursor: pointer; background: var(--icons) calc(var(--frame) * -4cqw) 0 / calc(var(--frames) * 4cqw) 4cqw; image-rendering: pixelated; }
+    .share-btn:hover { transform: translateY(-0.25cqw); }
+    .share-btn:focus-visible { outline: 0.25cqw solid #fff3a0; outline-offset: 0.25cqw; }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <canvas id="game" width="800" height="600"></canvas>
+    <nav id="share" hidden></nav>
+  </div>
+  <button id="mute" type="button">🔊</button>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

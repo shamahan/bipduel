@@ -1,0 +1,20 @@
+import { Strings } from './strings';
+
+export const pl: Strings = {
+  languageName: 'Polski',
+  play: 'Graj',
+  language: 'Język',
+  target: 'Punkty do wygranej',
+  magazine: 'Amunicja',
+  unlimited: 'Bez limitu',
+  helpP1: 'P1: A/D — skręt, W/S — strzał',
+  helpP2: 'P2: ←/→ — skręt, ↑/↓ — strzał',
+  helpMenu: '↑/↓ — wybór, ←/→ — zmiana, SPACJA — OK, P — pauza, M — dźwięk',
+  firstTo: (n) => `do ${n}`,
+  reloading: 'PRZEŁADOWANIE…',
+  paused: 'PAUZA',
+  pauseHint: 'SPACJA — dalej, Q — menu',
+  winner: (p) => `WYGRYWA P${p}!`,
+  matchOver: 'KONIEC MECZU',
+  gameOverHint: 'SPACJA — rewanż, ESC — menu',
+};
