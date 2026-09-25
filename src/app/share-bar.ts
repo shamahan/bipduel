@@ -3,24 +3,27 @@ import { SHARE_NETWORKS, gameUrl, shareLinks } from './share';
 import { SHARE_STRINGS } from '../i18n/share';
 import type { Language } from '../i18n/languages';
 
-const COPIED_MS = 2000; // сколько вместо подписи висит «ссылка скопирована»
+const COPIED_MS = 2000; // сколько кнопка копирования показывает галочку «скопировано»
+const COPY_FRAME = SHARE_NETWORKS.length; // кадры share-icons.png: сети, «копировать», галочка
+const COPIED_FRAME = SHARE_NETWORKS.length + 1;
 
 export type ShareBar = { sync(visible: boolean, language: Language): void };
 
 // Панель «поделиться» внизу меню: настоящие ссылки поверх канваса, чтобы работали клик,
 // Tab и открытие в новой вкладке. Иконки — кадры share-icons.png, по кадру на сеть.
+// Видимой подписи нет — ряд иконок стоит ровно по центру; название панели и «ссылка
+// скопирована» слышны только скринридеру.
 export function mountShareBar(root: HTMLElement, href: string): ShareBar {
   const url = gameUrl(href);
   root.style.setProperty('--icons', `url(${iconsUrl})`);
-  root.style.setProperty('--frames', String(SHARE_NETWORKS.length + 1)); // сети + «скопировать ссылку»
+  root.style.setProperty('--frames', String(COPIED_FRAME + 1));
 
-  const label = document.createElement('span');
-  label.id = 'share-label';
-  label.setAttribute('aria-live', 'polite');
-  root.setAttribute('aria-labelledby', label.id);
+  const status = document.createElement('span');
+  status.className = 'sr-only';
+  status.setAttribute('aria-live', 'polite');
   const icons = document.createElement('div');
   icons.className = 'share-icons';
-  root.append(label, icons);
+  root.append(icons, status);
 
   const anchors = SHARE_NETWORKS.map((_, k) => {
     const a = document.createElement('a');
@@ -36,7 +39,7 @@ export function mountShareBar(root: HTMLElement, href: string): ShareBar {
   const copy = document.createElement('button');
   copy.type = 'button';
   copy.className = 'share-btn';
-  copy.style.setProperty('--frame', String(SHARE_NETWORKS.length));
+  copy.style.setProperty('--frame', String(COPY_FRAME));
   icons.append(copy);
 
   // Enter/Space на кнопке панели — её действие, а не старт матча: окно их глотает через preventDefault
@@ -60,13 +63,15 @@ export function mountShareBar(root: HTMLElement, href: string): ShareBar {
       if (state === painted) return; // DOM трогаем, только когда что-то поменялось
       painted = state;
       const t = SHARE_STRINGS[language];
-      label.textContent = copied ? t.copied : t.label;
+      root.setAttribute('aria-label', t.label);
+      status.textContent = copied ? t.copied : '';
+      copy.style.setProperty('--frame', String(copied ? COPIED_FRAME : COPY_FRAME));
       shareLinks(url, t.text).forEach((link, k) => {
         anchors[k].href = link.href;
         anchors[k].title = t.via(link.name);
         anchors[k].setAttribute('aria-label', t.via(link.name));
       });
-      copy.title = t.copy;
+      copy.title = copied ? t.copied : t.copy;
       copy.setAttribute('aria-label', t.copy);
     },
   };

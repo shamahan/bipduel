@@ -17,10 +17,10 @@ describe('набор кнопок', () => {
     expect(SHARE_NETWORKS.map((n) => n.id)).toEqual(['telegram', 'whatsapp', 'x', 'facebook', 'reddit']);
   });
 
-  it('в share-icons.png по кадру 16x16 на сеть и один на «скопировать ссылку»', () => {
+  it('в share-icons.png по кадру 16x16 на сеть, «скопировать ссылку» и галочку «скопировано»', () => {
     const png = atob(iconsDataUrl.split(',')[1]);
     const u32 = (at: number) => [0, 1, 2, 3].reduce((n, i) => n * 256 + png.charCodeAt(at + i), 0);
-    expect(u32(16)).toBe((SHARE_NETWORKS.length + 1) * 16); // IHDR: ширина
+    expect(u32(16)).toBe((SHARE_NETWORKS.length + 2) * 16); // IHDR: ширина
     expect(u32(20)).toBe(16); // IHDR: высота
   });
 });
@@ -57,19 +57,11 @@ describe('ссылки для шаринга', () => {
 });
 
 describe('переводы шаринга', () => {
-  // как в index.html: кнопки сетей и «копировать» 16x16 ×2 через 8 px — ровно по центру экрана,
-  // подпись справа налево от них через 12 px
-  const buttons = SHARE_NETWORKS.length + 1;
-  const ICONS_ROW = buttons * 32 + (buttons - 1) * 8;
   for (const lang of LANGUAGES) {
-    it(`${lang}: все фразы есть и подпись помещается слева от иконок`, () => {
+    it(`${lang}: все фразы есть`, () => {
       const t = SHARE_STRINGS[lang];
       for (const s of [t.label, t.copy, t.copied, t.text]) expect(s.trim()).not.toBe('');
       for (const n of SHARE_NETWORKS) expect(t.via(n.name)).toContain(n.name);
-      // Press Start 2P моноширинный: символ — квадрат со стороной в кегль 12 px
-      for (const visible of [t.label, t.copied]) {
-        expect([...visible].length * 12).toBeLessThanOrEqual((800 - ICONS_ROW) / 2 - 12);
-      }
     });
 
     it(`${lang}: в словах не смешаны латиница и кириллица`, () => {
