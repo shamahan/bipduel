@@ -37,12 +37,17 @@
     .share-btn { width: 4cqw; height: 4cqw; padding: 0; border: 0; cursor: pointer; background: var(--icons) calc(var(--frame) * -4cqw) 0 / calc(var(--frames) * 4cqw) 4cqw; image-rendering: pixelated; }
     .share-btn:hover { transform: translateY(-0.25cqw); }
     .share-btn:focus-visible { outline: 0.25cqw solid #fff3a0; outline-offset: 0.25cqw; }
+    /* зоны касания строк меню (src/app/menu-hit.ts); сам контейнер клики пропускает — к ряду «поделиться» */
+    #menu-hit { position: absolute; inset: 0; pointer-events: none; }
+    #menu-hit[hidden] { display: none; }
+    .menu-hit { position: absolute; pointer-events: auto; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   </style>
 </head>
 <body>
   <div id="stage">
     <canvas id="game" width="800" height="600"></canvas>
     <nav id="share" hidden></nav>
+    <div id="menu-hit" hidden></div>
   </div>
   <button id="mute" type="button">🔊</button>
   <script type="module" src="/src/main.ts"></script>

@@ -6,6 +6,7 @@ import { TUNING } from './sim/tuning';
 import { loadSprites } from './render/sprites';
 import { SettingsStorage, loadSettings, saveSettings } from './app/settings';
 import { mountShareBar } from './app/share-bar';
+import { mountMenuHit } from './app/menu-hit';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 canvas.width = TUNING.world.width;
@@ -40,6 +41,7 @@ const GAME_KEYS = new Set([
 
 const muteBtn = document.querySelector<HTMLButtonElement>('#mute')!;
 const shareBar = mountShareBar(document.querySelector<HTMLElement>('#share')!, location.href);
+const menuHit = mountMenuHit(document.querySelector<HTMLElement>('#menu-hit')!, (index, dir) => app.tapMenu(index, dir));
 
 function syncMuteButton() {
   muteBtn.textContent = sound.muted ? '🔇' : '🔊';
@@ -85,6 +87,7 @@ function frame(now: number) {
   }
   app.draw(ctx);
   shareBar.sync(app.screen === 'menu', app.settings.language);
+  menuHit.sync(app.screen === 'menu');
   requestAnimationFrame(frame);
 }
 loadSprites().then(() => requestAnimationFrame(frame));
