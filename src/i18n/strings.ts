@@ -15,4 +15,14 @@ export type Strings = {
   winner: (player: number) => string;
   matchOver: string;
   gameOverHint: string;
+  // сенсорный экран
+  touchHelp: string; // одна строка подсказки в меню вместо трёх про клавиши
+  resume: string; // кнопки под заголовком паузы и конца матча
+  toMenu: string;
+  rematch: string;
+  rotate: string; // на весь экран в портрете: играть можно только в альбоме
+  turnCcw: string; // подписи кнопок боя для скринридера, к ним спереди добавляется «P1: »
+  turnCw: string;
+  fire: string;
+  pause: string;
 };

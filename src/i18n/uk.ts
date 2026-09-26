@@ -17,4 +17,13 @@ export const uk: Strings = {
   winner: (p) => `ПЕРЕМІГ P${p}!`,
   matchOver: 'МАТЧ ЗАВЕРШЕНО',
   gameOverHint: 'ПРОБІЛ — реванш, ESC — у меню',
+  touchHelp: 'P1 — кнопки ліворуч, P2 — праворуч',
+  resume: 'Продовжити',
+  toMenu: 'У меню',
+  rematch: 'Реванш',
+  rotate: 'Поверніть телефон',
+  turnCcw: 'поворот проти годинникової',
+  turnCw: 'поворот за годинниковою',
+  fire: 'вогонь',
+  pause: 'пауза',
 };

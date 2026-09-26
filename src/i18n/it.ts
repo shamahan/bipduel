@@ -17,4 +17,13 @@ export const it: Strings = {
   winner: (p) => `VINCE P${p}!`,
   matchOver: 'PARTITA FINITA',
   gameOverHint: 'SPAZIO — rivincita, ESC — menu',
+  touchHelp: 'P1 — tasti a sinistra, P2 — a destra',
+  resume: 'Riprendi',
+  toMenu: 'Menu',
+  rematch: 'Rivincita',
+  rotate: 'Ruota il telefono',
+  turnCcw: 'virare in senso antiorario',
+  turnCw: 'virare in senso orario',
+  fire: 'sparare',
+  pause: 'pausa',
 };

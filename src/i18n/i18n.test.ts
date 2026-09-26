@@ -45,9 +45,14 @@ describe('переводы', () => {
         for (const magazine of MAGAZINE_OPTIONS) rows.push(...menuRows(t, { language: lang, target, magazine }));
       }
       for (const row of rows) expect(width('> ' + row, TEXT_SIZE.menu)).toBeLessThanOrEqual(SCREEN_W - 40);
-      for (const line of [t.helpP1, t.helpP2, t.helpMenu, t.pauseHint, t.gameOverHint]) {
+      for (const line of [t.helpP1, t.helpP2, t.helpMenu, t.touchHelp, t.pauseHint, t.gameOverHint]) {
         expect(width(line, TEXT_SIZE.help)).toBeLessThanOrEqual(SCREEN_W - 20);
       }
+      // кнопки паузы и конца матча на сенсорном экране стоят по две в ряд
+      for (const label of [t.resume, t.toMenu, t.rematch]) {
+        expect(width(label, TEXT_SIZE.button)).toBeLessThanOrEqual(320);
+      }
+      expect(width(t.rotate, TEXT_SIZE.button)).toBeLessThanOrEqual(SCREEN_W - 20);
       for (const title of [t.paused, t.winner(1), t.winner(2), t.matchOver]) {
         expect(width(title, TEXT_SIZE.overlayTitle)).toBeLessThanOrEqual(SCREEN_W - 20);
       }

@@ -8,8 +8,9 @@ import { EXPLOSION_FRAMES, PLANE_FRAMES, ROLL_FRAMES, cloudSprite, explosionSpri
 const W = TUNING.world.width;
 const H = TUNING.world.height;
 const FONT = '"Press Start 2P", monospace';
-// кегли текстов; тест переводов проверяет по ним, что каждая фраза помещается на своё место
-export const TEXT_SIZE = { title: 40, menu: 16, help: 12, overlayTitle: 28, hudScore: 18, hudTarget: 12, reload: 10 };
+// кегли текстов; тест переводов проверяет по ним, что каждая фраза помещается на своё место.
+// button — DOM-кнопки паузы и конца матча (в CSS это 2cqw) и надпись «Поверните телефон».
+export const TEXT_SIZE = { title: 40, menu: 16, help: 12, overlayTitle: 28, hudScore: 18, hudTarget: 12, reload: 10, button: 16 };
 const PROP_FPS = 30; // кадров анимации пропеллера в секунду
 const SMOKE_STEP = 10; // px по вертикали между клубами дыма штопора
 // Оборотов бочки в секунду. Пусть за штопор набирается целое число оборотов (сейчас 2 за 1 с):

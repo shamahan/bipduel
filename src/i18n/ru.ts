@@ -17,4 +17,13 @@ export const ru: Strings = {
   winner: (p) => `ПОБЕДИЛ P${p}!`,
   matchOver: 'МАТЧ ОКОНЧЕН',
   gameOverHint: 'ПРОБЕЛ — реванш, ESC — в меню',
+  touchHelp: 'P1 — кнопки слева, P2 — справа',
+  resume: 'Продолжить',
+  toMenu: 'В меню',
+  rematch: 'Реванш',
+  rotate: 'Поверните телефон',
+  turnCcw: 'поворот против часовой',
+  turnCw: 'поворот по часовой',
+  fire: 'огонь',
+  pause: 'пауза',
 };

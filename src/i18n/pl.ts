@@ -17,4 +17,13 @@ export const pl: Strings = {
   winner: (p) => `WYGRYWA P${p}!`,
   matchOver: 'KONIEC MECZU',
   gameOverHint: 'SPACJA — rewanż, ESC — menu',
+  touchHelp: 'P1 — przyciski z lewej, P2 — z prawej',
+  resume: 'Dalej',
+  toMenu: 'Menu',
+  rematch: 'Rewanż',
+  rotate: 'Obróć telefon poziomo',
+  turnCcw: 'skręt przeciwnie do ruchu wskazówek zegara',
+  turnCw: 'skręt zgodnie z ruchem wskazówek zegara',
+  fire: 'strzał',
+  pause: 'pauza',
 };

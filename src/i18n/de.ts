@@ -17,4 +17,13 @@ export const de: Strings = {
   winner: (p) => `P${p} GEWINNT!`,
   matchOver: 'SPIEL VORBEI',
   gameOverHint: 'LEERTASTE — Revanche, ESC — Menü',
+  touchHelp: 'P1 — Tasten links, P2 — Tasten rechts',
+  resume: 'Weiter',
+  toMenu: 'Menü',
+  rematch: 'Revanche',
+  rotate: 'Handy quer halten',
+  turnCcw: 'gegen den Uhrzeigersinn drehen',
+  turnCw: 'im Uhrzeigersinn drehen',
+  fire: 'feuern',
+  pause: 'Pause',
 };

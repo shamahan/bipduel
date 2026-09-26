@@ -17,4 +17,13 @@ export const nl: Strings = {
   winner: (p) => `P${p} WINT!`,
   matchOver: 'WEDSTRIJD VOORBIJ',
   gameOverHint: 'SPATIE — revanche, ESC — menu',
+  touchHelp: 'P1 — knoppen links, P2 — rechts',
+  resume: 'Verder',
+  toMenu: 'Menu',
+  rematch: 'Revanche',
+  rotate: 'Houd je telefoon dwars',
+  turnCcw: 'tegen de klok in draaien',
+  turnCw: 'met de klok mee draaien',
+  fire: 'vuren',
+  pause: 'pauze',
 };
