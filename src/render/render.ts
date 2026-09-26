@@ -11,6 +11,9 @@ const FONT = '"Press Start 2P", monospace';
 // кегли текстов; тест переводов проверяет по ним, что каждая фраза помещается на своё место.
 // button — DOM-кнопки паузы и конца матча (в CSS это 2cqw) и надпись «Поверните телефон».
 export const TEXT_SIZE = { title: 40, menu: 16, help: 12, overlayTitle: 28, hudScore: 18, hudTarget: 12, reload: 10, button: 16 };
+// строки меню: верх первой строки и шаг; по ним же лежат зоны касания (src/app/menu-hit.ts)
+export const MENU_TOP = 230;
+export const MENU_STEP = 40;
 const PROP_FPS = 30; // кадров анимации пропеллера в секунду
 const SMOKE_STEP = 10; // px по вертикали между клубами дыма штопора
 // Оборотов бочки в секунду. Пусть за штопор набирается целое число оборотов (сейчас 2 за 1 с):
@@ -161,7 +164,7 @@ export function drawMenu(ctx: CanvasRenderingContext2D, rows: string[], selected
   ctx.font = `700 ${TEXT_SIZE.menu}px ${FONT}`;
   rows.forEach((row, i) => {
     const prefix = i === selected ? '> ' : '  ';
-    ctx.fillText(prefix + row, W / 2, 230 + i * 40);
+    ctx.fillText(prefix + row, W / 2, MENU_TOP + i * MENU_STEP);
   });
   ctx.font = `${TEXT_SIZE.help}px ${FONT}`;
   help.forEach((line, i) => fillTextArrows(ctx, line, W / 2, 440 + i * 20));
@@ -198,16 +201,18 @@ function fillTextArrows(ctx: CanvasRenderingContext2D, line: string, x: number, 
   }
 }
 
-export function drawPause(ctx: CanvasRenderingContext2D, t: Strings): void {
-  overlay(ctx, t.paused, t.pauseHint);
+// withHint = false — без подсказки про клавиши: на сенсорном экране под заголовком стоят
+// кнопки (src/app/overlay-buttons.ts)
+export function drawPause(ctx: CanvasRenderingContext2D, t: Strings, withHint = true): void {
+  overlay(ctx, t.paused, withHint ? t.pauseHint : null);
 }
 
-export function drawGameOver(ctx: CanvasRenderingContext2D, state: GameState, t: Strings): void {
+export function drawGameOver(ctx: CanvasRenderingContext2D, state: GameState, t: Strings, withHint = true): void {
   const title = state.winner === null ? t.matchOver : t.winner(state.winner + 1);
-  overlay(ctx, title, t.gameOverHint);
+  overlay(ctx, title, withHint ? t.gameOverHint : null);
 }
 
-function overlay(ctx: CanvasRenderingContext2D, title: string, hint: string): void {
+function overlay(ctx: CanvasRenderingContext2D, title: string, hint: string | null): void {
   ctx.fillStyle = COLORS.overlay;
   ctx.fillRect(0, 0, W, H);
   ctx.textAlign = 'center';
@@ -215,6 +220,7 @@ function overlay(ctx: CanvasRenderingContext2D, title: string, hint: string): vo
   ctx.fillStyle = COLORS.overlayText;
   ctx.font = `700 ${TEXT_SIZE.overlayTitle}px ${FONT}`;
   ctx.fillText(title, W / 2, H / 2 - 30);
+  if (hint === null) return;
   ctx.font = `${TEXT_SIZE.help}px ${FONT}`;
   ctx.fillText(hint, W / 2, H / 2 + 30);
 }

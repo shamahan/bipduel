@@ -3,6 +3,8 @@ import { App, NullSound } from './app';
 import { inputs } from '../sim/test-helpers';
 import { TUNING } from '../sim/tuning';
 import { Settings } from './settings';
+import { STRINGS } from '../i18n';
+import { fillTextCalls } from '../render/test-helpers';
 
 function newApp() {
   return new App(new NullSound());
@@ -150,5 +152,99 @@ describe('App', () => {
     expect(app.screen).toBe('paused');
     app.pauseIfPlaying();
     expect(app.screen).toBe('paused');
+  });
+});
+
+describe('App: касания', () => {
+  it('тап по «Играть» запускает матч и разблокирует звук', () => {
+    const sound = new NullSound();
+    let resumed = 0;
+    sound.resume = () => { resumed++; };
+    const app = new App(sound);
+    app.tapMenu(0, 0);
+    expect(app.screen).toBe('playing');
+    expect(resumed).toBe(1);
+  });
+
+  it('строка «Играть» запускает матч, какой половиной ни тапни', () => {
+    const app = newApp();
+    app.tapMenu(0, 1);
+    expect(app.screen).toBe('playing');
+  });
+
+  it('половины строки настройки листают назад и вперёд, курсор встаёт на строку', () => {
+    const saved: Settings[] = [];
+    const app = new App(new NullSound(), { language: 'en', target: 10, magazine: 5 }, (s) => saved.push({ ...s }));
+    app.tapMenu(2, -1); // очки: 10 -> 5
+    expect(app.menuIndex).toBe(2);
+    app.tapMenu(1, 1); // язык: en -> de
+    expect(app.menuIndex).toBe(1);
+    app.tapMenu(3, -1); // патроны: 5 -> 20 по кругу
+    expect(app.menuIndex).toBe(3);
+    expect(saved).toEqual([
+      { language: 'en', target: 5, magazine: 5 },
+      { language: 'de', target: 5, magazine: 5 },
+      { language: 'de', target: 5, magazine: 20 },
+    ]);
+    expect(app.screen).toBe('menu');
+  });
+
+  it('вне меню тапы по строкам ничего не делают', () => {
+    const app = new App(new NullSound(), { language: 'en', target: 10, magazine: 5 });
+    app.tapMenu(0, 0);
+    app.tapMenu(1, 1);
+    expect(app.settings.language).toBe('en');
+    expect(app.menuIndex).toBe(0);
+  });
+
+  it('⏸, «Продолжить» и «В меню»', () => {
+    const app = newApp();
+    app.tapMenu(0, 0);
+    app.pauseIfPlaying();
+    expect(app.screen).toBe('paused');
+    app.resume();
+    expect(app.screen).toBe('playing');
+    app.pauseIfPlaying();
+    app.toMenu();
+    expect(app.screen).toBe('menu');
+  });
+
+  it('«Реванш» после матча — новый матч с нулевым счётом, «В меню» — в меню', () => {
+    const app = newApp();
+    app.tapMenu(0, 0);
+    app.state!.winner = 0;
+    app.update(inputs(), TUNING.fixedDt);
+    expect(app.screen).toBe('gameover');
+    app.rematch();
+    expect(app.screen).toBe('playing');
+    expect(app.state!.scores).toEqual([0, 0]);
+    app.state!.winner = 1;
+    app.update(inputs(), TUNING.fixedDt);
+    app.toMenu();
+    expect(app.screen).toBe('menu');
+  });
+
+  it('кнопки оверлеев не действуют не на своём экране', () => {
+    const app = newApp();
+    app.resume();
+    app.rematch();
+    app.toMenu();
+    expect(app.screen).toBe('menu');
+    app.tapMenu(0, 0);
+    app.resume();
+    app.rematch();
+    app.toMenu();
+    expect(app.screen).toBe('playing');
+  });
+
+  it('подсказка меню: три строки про клавиши, на сенсорном экране — одна про кнопки', () => {
+    const t = STRINGS.ru;
+    const app = new App(new NullSound(), { language: 'ru', target: 10, magazine: 5 });
+    const texts = () => fillTextCalls((ctx) => app.draw(ctx)).map(([text]) => text);
+    expect(texts()).toContain(t.helpP1);
+    expect(texts()).not.toContain(t.touchHelp);
+    app.touch = true;
+    expect(texts()).toContain(t.touchHelp);
+    expect(texts()).not.toContain(t.helpP1);
   });
 });

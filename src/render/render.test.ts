@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { SPIN_ROLLS_PER_SEC, explosionFrame, planeScaleY, rollFrame, splitArrows } from './render';
+import { MENU_STEP, MENU_TOP, SPIN_ROLLS_PER_SEC, drawGameOver, drawMenu, drawPause, explosionFrame, planeScaleY, rollFrame, splitArrows } from './render';
+import { fillTextCalls } from './test-helpers';
 import { EXPLOSION_FRAMES, ROLL_FRAMES } from './sprites';
 import { TUNING } from '../sim/tuning';
+import { STRINGS } from '../i18n';
+import { createInitialState } from '../sim/state';
 
 describe('стрелки ←/→, которых нет в шрифте', () => {
   it('на их месте в строке пробел, а сами они — повёрнутая ↑ в той же клетке', () => {
@@ -60,5 +63,27 @@ describe('кадры взрыва', () => {
     for (let k = 0; k < EXPLOSION_FRAMES; k++) {
       expect(explosionFrame((k + 0.5) * frameTime)).toBe(k);
     }
+  });
+});
+
+describe('меню', () => {
+  it('строки стоят с MENU_TOP через MENU_STEP — по этим же числам лежат зоны касания', () => {
+    const calls = fillTextCalls((ctx) => drawMenu(ctx, ['a', 'b', 'c', 'd'], 0, []));
+    const rows = calls.filter(([text]) => /[abcd]$/.test(text));
+    expect(rows.map(([, , y]) => y)).toEqual([0, 1, 2, 3].map((i) => MENU_TOP + i * MENU_STEP));
+  });
+});
+
+describe('оверлеи паузы и конца матча', () => {
+  const t = STRINGS.ru;
+
+  it('по умолчанию под заголовком подсказка про клавиши', () => {
+    expect(fillTextCalls((ctx) => drawPause(ctx, t)).map(([text]) => text)).toEqual([t.paused, t.pauseHint]);
+  });
+
+  it('на сенсорном экране подсказки нет — там под заголовком кнопки', () => {
+    expect(fillTextCalls((ctx) => drawPause(ctx, t, false)).map(([text]) => text)).toEqual([t.paused]);
+    const state = createInitialState({ kind: 'endless' }, () => 0.5, 5);
+    expect(fillTextCalls((ctx) => drawGameOver(ctx, state, t, false)).map(([text]) => text)).toEqual([t.matchOver]);
   });
 });

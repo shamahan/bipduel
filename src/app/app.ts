@@ -36,6 +36,7 @@ export class App {
   screen: Screen = 'menu';
   menuIndex = 0;
   state: GameState | null = null;
+  touch = false; // сенсорный режим: подсказки меню и оверлеев — под кнопки на экране, а не под клавиши
 
   constructor(
     private sound: SoundPort,
@@ -53,18 +54,15 @@ export class App {
         this.handleMenuKey(code);
         break;
       case 'playing':
-        if (code === 'Escape' || code === 'KeyP') this.screen = 'paused';
+        if (code === 'Escape' || code === 'KeyP') this.pauseIfPlaying();
         break;
       case 'paused':
-        if (code === 'Escape' || code === 'KeyP' || code === 'Space') {
-          this.screen = 'playing';
-        } else if (code === 'KeyQ') {
-          this.screen = 'menu';
-        }
+        if (code === 'Escape' || code === 'KeyP' || code === 'Space') this.resume();
+        else if (code === 'KeyQ') this.toMenu();
         break;
       case 'gameover':
-        if (CONFIRM.includes(code)) this.startMatch();
-        else if (code === 'Escape') this.screen = 'menu';
+        if (CONFIRM.includes(code)) this.rematch();
+        else if (code === 'Escape') this.toMenu();
         break;
     }
   }
@@ -76,6 +74,29 @@ export class App {
     else if (onPlay && CONFIRM.includes(code)) this.startMatch();
     else if (LEFT.includes(code)) this.changeOption(-1);
     else if (RIGHT.includes(code) || CONFIRM.includes(code)) this.changeOption(1);
+  }
+
+  // Тап по строке меню: строка становится выбранной. На «Играть» — старт; на настройке
+  // dir −1/+1 листает значение назад/вперёд, 0 — вперёд, как пробел.
+  tapMenu(index: number, dir: -1 | 0 | 1): void {
+    if (this.screen !== 'menu') return;
+    this.menuIndex = index;
+    if (MENU_ITEMS[index] === 'play') this.startMatch();
+    else this.changeOption(dir === -1 ? -1 : 1);
+  }
+
+  // Действия кнопок паузы и конца матча; не на своём экране ничего не делают — клик мог
+  // прийти по кнопке, которую следующий кадр уже спрятал бы.
+  resume(): void {
+    if (this.screen === 'paused') this.screen = 'playing';
+  }
+
+  toMenu(): void {
+    if (this.screen === 'paused' || this.screen === 'gameover') this.screen = 'menu';
+  }
+
+  rematch(): void {
+    if (this.screen === 'gameover') this.startMatch();
   }
 
   private changeOption(dir: 1 | -1): void {
@@ -138,19 +159,21 @@ export class App {
   draw(ctx: CanvasRenderingContext2D): void {
     const t = this.strings;
     switch (this.screen) {
-      case 'menu':
-        drawMenu(ctx, menuRows(t, this.settings), this.menuIndex, [t.helpP1, t.helpP2, t.helpMenu]);
+      case 'menu': {
+        const help = this.touch ? [t.touchHelp] : [t.helpP1, t.helpP2, t.helpMenu];
+        drawMenu(ctx, menuRows(t, this.settings), this.menuIndex, help);
         break;
+      }
       case 'playing':
         drawGame(ctx, this.state!, t);
         break;
       case 'paused':
         drawGame(ctx, this.state!, t);
-        drawPause(ctx, t);
+        drawPause(ctx, t, !this.touch);
         break;
       case 'gameover':
         drawGame(ctx, this.state!, t);
-        drawGameOver(ctx, this.state!, t);
+        drawGameOver(ctx, this.state!, t, !this.touch);
         break;
     }
   }
