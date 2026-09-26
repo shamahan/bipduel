@@ -7,6 +7,7 @@ import { loadSprites } from './render/sprites';
 import { SettingsStorage, loadSettings, saveSettings } from './app/settings';
 import { mountShareBar } from './app/share-bar';
 import { mountMenuHit } from './app/menu-hit';
+import { mountTouchMode } from './app/touch-mode';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 canvas.width = TUNING.world.width;
@@ -42,12 +43,14 @@ const GAME_KEYS = new Set([
 const muteBtn = document.querySelector<HTMLButtonElement>('#mute')!;
 const shareBar = mountShareBar(document.querySelector<HTMLElement>('#share')!, location.href);
 const menuHit = mountMenuHit(document.querySelector<HTMLElement>('#menu-hit')!, (index, dir) => app.tapMenu(index, dir));
+const touchMode = mountTouchMode(document.documentElement, document.querySelector<HTMLElement>('#rotate')!);
 
 function syncMuteButton() {
   muteBtn.textContent = sound.muted ? '🔇' : '🔊';
 }
 
 window.addEventListener('keydown', (e) => {
+  if (GAME_KEYS.has(e.code)) touchMode.set(false); // играют с клавиатуры — кнопки на экране не нужны
   if (GAME_KEYS.has(e.code) && !e.ctrlKey && !e.metaKey && !e.altKey) e.preventDefault();
   if (!e.repeat) {
     app.handleKey(e.code);
@@ -79,6 +82,8 @@ muteBtn.addEventListener('click', () => {
 let last = performance.now();
 let acc = 0;
 function frame(now: number) {
+  app.touch = touchMode.on;
+  if (touchMode.portrait) app.pauseIfPlaying(); // телефон повернули посреди боя: поле закрыто, матч ждёт
   acc += Math.min((now - last) / 1000, 0.25);
   last = now;
   while (acc >= TUNING.fixedDt) {
@@ -88,6 +93,7 @@ function frame(now: number) {
   app.draw(ctx);
   shareBar.sync(app.screen === 'menu', app.settings.language);
   menuHit.sync(app.screen === 'menu');
+  touchMode.sync(app.settings.language);
   requestAnimationFrame(frame);
 }
 loadSprites().then(() => requestAnimationFrame(frame));

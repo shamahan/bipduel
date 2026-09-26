@@ -23,10 +23,16 @@
   <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <style>
-    :root { color-scheme: dark; }
-    body { margin: 0; background: #10141c; display: grid; place-items: center; min-height: 100vh; }
+    /* ширина поля 4:3; в сенсорном режиме по бокам остаётся не меньше --pad-min под кнопки игроков */
+    :root { color-scheme: dark; --vh: 1vh; --pad-min: 0px; --stage-w: min(100vw - 2 * var(--pad-min), 133 * var(--vh), 1200px); }
+    /* dvh — высота видимой части: в мобильном Safari 100vh считается без панели браузера, и низ поля уходил под неё */
+    @supports (height: 1dvh) { :root { --vh: 1dvh; } }
+    :root[data-input="touch"] { --pad-min: 96px; }
+    body { margin: 0; background: #10141c; display: grid; place-items: center; min-height: calc(100 * var(--vh)); touch-action: manipulation; }
     /* 1cqw = 8 px канваса 800x600: панель поверх канваса масштабируется вместе с ним */
-    #stage { position: relative; width: min(100vw, 133vh, 1200px); container-type: inline-size; }
+    #stage { position: relative; width: var(--stage-w); container-type: inline-size; }
+    /* на сенсорном экране поле не прокручивается и не масштабируется пальцами */
+    :root[data-input="touch"] #stage { touch-action: none; }
     canvas { display: block; width: 100%; image-rendering: pixelated; }
     #mute { position: fixed; top: 8px; right: 8px; font: 14px monospace; background: #222a38; color: #cdd6e4; border: 1px solid #445; padding: 4px 10px; cursor: pointer; }
     /* поделиться: низ меню, под подсказками, ряд иконок по центру (16x16 ×2 = y 532..564 канваса) */
@@ -41,6 +47,9 @@
     #menu-hit { position: absolute; inset: 0; pointer-events: none; }
     #menu-hit[hidden] { display: none; }
     .menu-hit { position: absolute; pointer-events: auto; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    /* в портрете на сенсорном экране играть нельзя: всё закрывает «Поверните телефон» (src/app/touch-mode.ts) */
+    #rotate { display: none; position: fixed; inset: 0; z-index: 10; place-items: center; box-sizing: border-box; padding: 16px; background: #10141c; color: #f0f4fa; font: 16px/1.6 "Press Start 2P", monospace; text-align: center; }
+    @media (orientation: portrait) { :root[data-input="touch"] #rotate { display: grid; } }
   </style>
 </head>
 <body>
@@ -50,6 +59,7 @@
     <div id="menu-hit" hidden></div>
   </div>
   <button id="mute" type="button">🔊</button>
+  <div id="rotate"></div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
