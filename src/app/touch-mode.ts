@@ -11,7 +11,8 @@ export type TouchMode = {
 
 // Сенсорный режим — data-input="touch" на <html>: по нему CSS освобождает место под кнопки по бокам
 // поля и в портрете закрывает всё надписью. Включается, если у устройства только палец, и при любом
-// касании; main.ts выключает его игровой клавишей (планшет с клавиатурой, сенсорный ноутбук).
+// касании или пере (стилус — тоже не мышь); main.ts выключает его игровой клавишей (планшет
+// с клавиатурой, сенсорный ноутбук).
 export function mountTouchMode(html: HTMLElement, rotate: HTMLElement): TouchMode {
   const portrait = window.matchMedia('(orientation: portrait)');
   let on = false;
@@ -37,7 +38,7 @@ export function mountTouchMode(html: HTMLElement, rotate: HTMLElement): TouchMod
   };
   mode.set(window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(any-pointer: fine)').matches);
   window.addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'touch') mode.set(true);
+    if (e.pointerType !== 'mouse') mode.set(true); // touch и pen — не мышь
   }, true);
   return mode;
 }

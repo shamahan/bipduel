@@ -24,10 +24,15 @@ export function menuZones(): MenuZone[] {
 
 export type MenuHit = { sync(visible: boolean): void };
 
+// «В меню» с оверлея паузы/конца матча лежит над правой половиной верхних строк меню — гасим
+// тап по зоне, что пришёл слишком скоро после появления зон: это инерция того же двойного тапа.
+const DOUBLE_TAP_GUARD_MS = 350;
+
 // Невидимые зоны поверх строк меню — под палец и под мышь. Текст по-прежнему рисует канвас;
 // скринридеру и Tab зоны не видны: с клавиатуры меню управляется стрелками.
 export function mountMenuHit(root: HTMLElement, onTap: (index: number, dir: -1 | 0 | 1) => void): MenuHit {
   root.setAttribute('aria-hidden', 'true');
+  let shownAt = 0;
   for (const z of menuZones()) {
     const el = document.createElement('div');
     el.className = 'menu-hit';
@@ -35,13 +40,19 @@ export function mountMenuHit(root: HTMLElement, onTap: (index: number, dir: -1 |
     el.style.top = `${z.y / CQW}cqw`;
     el.style.width = `${z.w / CQW}cqw`;
     el.style.height = `${z.h / CQW}cqw`;
-    el.addEventListener('click', () => onTap(z.index, z.dir)); // click — по отпусканию: так iOS разрешит звук
+    el.addEventListener('click', () => {
+      if (performance.now() - shownAt < DOUBLE_TAP_GUARD_MS) return;
+      onTap(z.index, z.dir); // click — по отпусканию: так iOS разрешит звук
+    });
     root.append(el);
   }
   let shown: boolean | null = null;
   return {
     sync(visible) {
-      if (visible !== shown) root.hidden = !(shown = visible);
+      if (visible !== shown) {
+        if (visible) shownAt = performance.now(); // ребро скрыто → видно
+        root.hidden = !(shown = visible);
+      }
     },
   };
 }

@@ -88,7 +88,9 @@ export class App {
   // Действия кнопок паузы и конца матча; не на своём экране ничего не делают — клик мог
   // прийти по кнопке, которую следующий кадр уже спрятал бы.
   resume(): void {
-    if (this.screen === 'paused') this.screen = 'playing';
+    if (this.screen !== 'paused') return;
+    this.screen = 'playing';
+    this.sound.resume(); // iOS мог прервать AudioContext, пока экран был в фоне на паузе
   }
 
   toMenu(): void {

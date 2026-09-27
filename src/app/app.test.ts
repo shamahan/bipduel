@@ -209,6 +209,20 @@ describe('App: касания', () => {
     expect(app.screen).toBe('menu');
   });
 
+  it('resume() из паузы переразблокирует звук (iOS мог прервать AudioContext в фоне)', () => {
+    const sound = new NullSound();
+    let resumed = 0;
+    sound.resume = () => { resumed++; };
+    const app = new App(sound);
+    app.tapMenu(0, 0);
+    app.pauseIfPlaying();
+    resumed = 0; // сбросить счётчик после resume() из startMatch()
+    app.resume();
+    expect(resumed).toBe(1);
+    app.resume(); // уже playing — no-op
+    expect(resumed).toBe(1);
+  });
+
   it('«Реванш» после матча — новый матч с нулевым счётом, «В меню» — в меню', () => {
     const app = newApp();
     app.tapMenu(0, 0);

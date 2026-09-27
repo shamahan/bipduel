@@ -13,7 +13,9 @@ type PadButton = { el: HTMLButtonElement; player: number; label: Label; code: st
 
 // Полосы кнопок по бокам поля: сверху ⏸, под ней ⟲ / огонь / ⟳ на всю ширину. Кнопки боя
 // срабатывают на касание, без задержки; палец можно вести с кнопки на кнопку своей полосы,
-// не отрывая. ⏸ — по click, то есть по отпусканию пальца, как остальные кнопки экрана.
+// не отрывая. ⏸ — по pointerdown (любой указатель): пока один палец держит кнопку боя, click
+// от второго пальца по ⏸ не придёт вовсе. click оставлен для активации с клавиатуры —
+// pauseIfPlaying() защищён от повтора, так что следующий за pointerdown click — no-op.
 export function mountTouchPads(
   pads: readonly [HTMLElement, HTMLElement],
   touch: TouchControls,
@@ -41,6 +43,11 @@ export function mountTouchPads(
     add(TOUCH_FRAMES.ccw, 'turnCcw', codes.ccw);
     add(TOUCH_FRAMES.fire, 'fire', codes.fire);
     add(TOUCH_FRAMES.cw, 'turnCw', codes.cw);
+    pause.addEventListener('pointerdown', (e) => {
+      e.preventDefault(); // не даём фокус и эмуляцию мыши второму пальцу
+      pause.blur();
+      onPause();
+    });
     pause.addEventListener('click', () => {
       pause.blur();
       onPause();
