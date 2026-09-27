@@ -47,6 +47,20 @@
     #menu-hit { position: absolute; inset: 0; pointer-events: none; }
     #menu-hit[hidden] { display: none; }
     .menu-hit { position: absolute; pointer-events: auto; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    /* полосы кнопок игроков (src/app/touch-pads.ts): от края экрана до поля, на всю высоту; рамки — PLAYER_COLORS */
+    .pad { position: fixed; top: 0; bottom: 0; width: calc((100vw - var(--stage-w)) / 2); box-sizing: border-box; padding: 6px; display: flex; flex-direction: column; gap: 6px; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+    .pad[hidden] { display: none; }
+    #pad-p1 { left: 0; --player: #d14b4b; }
+    #pad-p2 { right: 0; --player: #3b6fd1; }
+    /* appearance: none — иначе iOS Safari рисует кнопку по-своему поверх фона и рамки */
+    .pad-btn { flex: 1; display: grid; place-items: center; margin: 0; padding: 0; appearance: none; border-radius: 0; background: #222a38; border: 3px solid var(--player); touch-action: none; -webkit-tap-highlight-color: transparent; }
+    .pad-btn.pad-pause { flex: 0 0 15%; }
+    .pad-btn.pressed { background: var(--player); }
+    /* знак ×3: кадр ленты touch-buttons.png по --frame; у ⏸ ×2 */
+    .pad-icon { width: 48px; height: 48px; background: var(--touch-icons) calc(var(--frame) * -48px) 0 / 192px 48px; image-rendering: pixelated; pointer-events: none; }
+    .pad-pause .pad-icon { width: 32px; height: 32px; background-position: calc(var(--frame) * -32px) 0; background-size: 128px 32px; }
+    /* 🔊 в правом верхнем углу лёг бы на ⏸ второго игрока */
+    body:has(.pad:not([hidden])) #mute { display: none; }
     /* в портрете на сенсорном экране играть нельзя: всё закрывает «Поверните телефон» (src/app/touch-mode.ts) */
     #rotate { display: none; position: fixed; inset: 0; z-index: 10; place-items: center; box-sizing: border-box; padding: 16px; background: #10141c; color: #f0f4fa; font: 16px/1.6 "Press Start 2P", monospace; text-align: center; }
     @media (orientation: portrait) { :root[data-input="touch"] #rotate { display: grid; } }
@@ -58,6 +72,8 @@
     <nav id="share" hidden></nav>
     <div id="menu-hit" hidden></div>
   </div>
+  <div id="pad-p1" class="pad" hidden></div>
+  <div id="pad-p2" class="pad" hidden></div>
   <button id="mute" type="button">🔊</button>
   <div id="rotate"></div>
   <script type="module" src="/src/main.ts"></script>

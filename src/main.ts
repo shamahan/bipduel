@@ -8,6 +8,8 @@ import { SettingsStorage, loadSettings, saveSettings } from './app/settings';
 import { mountShareBar } from './app/share-bar';
 import { mountMenuHit } from './app/menu-hit';
 import { mountTouchMode } from './app/touch-mode';
+import { TouchControls } from './input/touch';
+import { mountTouchPads } from './app/touch-pads';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 canvas.width = TUNING.world.width;
@@ -17,6 +19,7 @@ ctx.imageSmoothingEnabled = false;
 
 const keyboard = new Keyboard();
 const sound = new Sound();
+const touch = new TouchControls(keyboard);
 
 function browserStorage(): SettingsStorage | null {
   try {
@@ -44,6 +47,11 @@ const muteBtn = document.querySelector<HTMLButtonElement>('#mute')!;
 const shareBar = mountShareBar(document.querySelector<HTMLElement>('#share')!, location.href);
 const menuHit = mountMenuHit(document.querySelector<HTMLElement>('#menu-hit')!, (index, dir) => app.tapMenu(index, dir));
 const touchMode = mountTouchMode(document.documentElement, document.querySelector<HTMLElement>('#rotate')!);
+const pads = mountTouchPads(
+  [document.querySelector<HTMLElement>('#pad-p1')!, document.querySelector<HTMLElement>('#pad-p2')!],
+  touch,
+  () => app.pauseIfPlaying(),
+);
 
 function syncMuteButton() {
   muteBtn.textContent = sound.muted ? '🔇' : '🔊';
@@ -65,6 +73,7 @@ window.addEventListener('keyup', (e) => keyboard.keyUp(e.code));
 
 function releaseAll() {
   keyboard.clear();
+  touch.clear();
   app.pauseIfPlaying();
 }
 window.addEventListener('blur', releaseAll);
@@ -93,6 +102,7 @@ function frame(now: number) {
   app.draw(ctx);
   shareBar.sync(app.screen === 'menu', app.settings.language);
   menuHit.sync(app.screen === 'menu');
+  pads.sync(app.screen === 'playing' && touchMode.on, app.settings.language);
   touchMode.sync(app.settings.language);
   requestAnimationFrame(frame);
 }
