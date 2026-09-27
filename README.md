@@ -28,6 +28,14 @@ It runs at <https://bipduel.shamahan.com/>.
   the menu. M toggles the sound. The game pauses itself when the window loses
   focus, and forgets every held key, so nobody comes back to a plane that
   kept firing on its own.
+- **On a phone or tablet** hold it sideways: Player 1's buttons are down
+  the left edge and Player 2's down the right — pause on top, then turn
+  anticlockwise, fire and turn clockwise. A finger can slide from one
+  button to the next without lifting. Tap a menu line to pick it; on a
+  setting, the left half steps back and the right half forward. The pause
+  and game-over screens get Resume, Rematch and Menu buttons. In portrait
+  the game asks you to turn the phone and pauses a running match. Pressing
+  a game key on a keyboard switches the buttons off again.
 - **The rules.** Planes fly at a constant speed; you only steer. One hit and
   you are down. The ground is deadly and so is everything standing on it —
   the forest, the hangar and the tower, the farm — and bullets stop on it too;
@@ -87,6 +95,7 @@ python pixel-art/plane/build.py      # plane, and the 8-frame roll for the spin
 python pixel-art/explosion/build.py  # explosion strip
 python pixel-art/ground/build.py     # terrain, far hills, and src/sim/skyline.ts
 python pixel-art/share/build.py      # share buttons
+python pixel-art/touch/build.py      # on-screen touch buttons
 python pixel-art/favicon/build.py    # favicon.ico and the touch icon
 ```
 
