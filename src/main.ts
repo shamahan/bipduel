@@ -10,6 +10,7 @@ import { mountMenuHit } from './app/menu-hit';
 import { mountTouchMode } from './app/touch-mode';
 import { TouchControls } from './input/touch';
 import { mountTouchPads } from './app/touch-pads';
+import { mountOverlayButtons } from './app/overlay-buttons';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 canvas.width = TUNING.world.width;
@@ -52,6 +53,7 @@ const pads = mountTouchPads(
   touch,
   () => app.pauseIfPlaying(),
 );
+const overlayButtons = mountOverlayButtons(document.querySelector<HTMLElement>('#overlay-buttons')!, app);
 
 function syncMuteButton() {
   muteBtn.textContent = sound.muted ? '🔇' : '🔊';
@@ -103,6 +105,7 @@ function frame(now: number) {
   shareBar.sync(app.screen === 'menu', app.settings.language);
   menuHit.sync(app.screen === 'menu');
   pads.sync(app.screen === 'playing' && touchMode.on, app.settings.language);
+  overlayButtons.sync(touchMode.on, app.settings.language);
   touchMode.sync(app.settings.language);
   requestAnimationFrame(frame);
 }

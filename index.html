@@ -47,6 +47,12 @@
     #menu-hit { position: absolute; inset: 0; pointer-events: none; }
     #menu-hit[hidden] { display: none; }
     .menu-hit { position: absolute; pointer-events: auto; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    /* кнопки паузы и конца матча на сенсорном экране (src/app/overlay-buttons.ts): по центру на y 330
+       канваса, где на ПК подсказка; кегль 2cqw = TEXT_SIZE.button, высота 6.75cqw */
+    #overlay-buttons { position: absolute; left: 0; right: 0; top: 37.875cqw; display: flex; justify-content: center; gap: 3cqw; }
+    #overlay-buttons[hidden] { display: none; }
+    .overlay-btn { font: 2cqw/1 "Press Start 2P", monospace; color: #f0f4fa; margin: 0; appearance: none; border-radius: 0; background: #222a38; border: 0.375cqw solid #f0f4fa; padding: 2cqw 3cqw; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .overlay-btn:active { background: #445; }
     /* полосы кнопок игроков (src/app/touch-pads.ts): от края экрана до поля, на всю высоту; рамки — PLAYER_COLORS */
     .pad { position: fixed; top: 0; bottom: 0; width: calc((100vw - var(--stage-w)) / 2); box-sizing: border-box; padding: 6px; display: flex; flex-direction: column; gap: 6px; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
     .pad[hidden] { display: none; }
@@ -71,6 +77,7 @@
     <canvas id="game" width="800" height="600"></canvas>
     <nav id="share" hidden></nav>
     <div id="menu-hit" hidden></div>
+    <div id="overlay-buttons" hidden></div>
   </div>
   <div id="pad-p1" class="pad" hidden></div>
   <div id="pad-p2" class="pad" hidden></div>
